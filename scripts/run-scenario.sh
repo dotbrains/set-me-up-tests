@@ -5,7 +5,27 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 
-SCENARIO_INPUT="${1:-default}"
+NATIVE=false
+SCENARIO_INPUT=""
+
+# Parse flags
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --native)
+            NATIVE=true
+            shift
+            ;;
+        *)
+            SCENARIO_INPUT="$1"
+            shift
+            ;;
+    esac
+done
+
+if [[ -z "${SCENARIO_INPUT:-}" ]]; then
+    SCENARIO_INPUT="default"
+fi
+
 SCENARIO_FILE=""
 
 if [[ -f "${REPO_ROOT}/scenarios/${SCENARIO_INPUT}.env" ]]; then
@@ -17,6 +37,14 @@ else
     echo "Available scenarios:" >&2
     ls -1 "${REPO_ROOT}/scenarios" >&2
     exit 1
+fi
+
+if [[ "${NATIVE}" == "true" ]]; then
+    echo "▶ Running scenario natively: ${SCENARIO_FILE}"
+    set -a
+    source "${SCENARIO_FILE}"
+    set +a
+    exec "${SCRIPT_DIR}/in-container-run.sh"
 fi
 
 IMAGE_TAG="${SMU_TEST_IMAGE_TAG:-set-me-up-tests:local}"

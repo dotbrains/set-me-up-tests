@@ -2,8 +2,15 @@
 
 set -euo pipefail
 
-# shellcheck disable=SC1091
-source /opt/harness/scripts/lib/assertions.sh
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+if [[ -f "/opt/harness/scripts/lib/assertions.sh" ]]; then
+    # shellcheck disable=SC1091
+    source /opt/harness/scripts/lib/assertions.sh
+else
+    # shellcheck disable=SC1091
+    source "${SCRIPT_DIR}/lib/assertions.sh"
+fi
 
 require_env() {
     local var_name="$1"

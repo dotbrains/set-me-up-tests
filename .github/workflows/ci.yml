@@ -46,3 +46,13 @@ jobs:
 
       - name: Run dotfiles scenario
         run: ./scripts/run-scenario.sh dotfiles
+
+  dotfiles-macos:
+    runs-on: macos-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: [shellcheck]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run dotfiles scenario (native macOS)
+        run: ./scripts/run-scenario.sh --native dotfiles-macos

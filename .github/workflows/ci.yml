@@ -5,8 +5,12 @@ on:
     branches: [main, master]
   pull_request:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  shellcheck:
+  default-scenario:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -19,20 +23,6 @@ jobs:
           shellcheck scripts/run-scenario.sh
           shellcheck scripts/in-container-run.sh
           shellcheck scripts/lib/assertions.sh
-
-  docker-build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Build Docker image
-        run: docker build -t set-me-up-tests:ci -f docker/Dockerfile .
-
-  default-scenario:
-    runs-on: ubuntu-latest
-    needs: [shellcheck, docker-build]
-    steps:
-      - uses: actions/checkout@v4
 
       - name: Run default scenario
         run: ./scripts/run-scenario.sh default
@@ -50,7 +40,7 @@ jobs:
   dotfiles-macos:
     runs-on: macos-latest
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [shellcheck]
+    needs: [default-scenario]
     steps:
       - uses: actions/checkout@v4
 

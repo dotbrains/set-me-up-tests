@@ -2,6 +2,7 @@
 
 set -euo pipefail
 
+# shellcheck disable=SC1091
 source /opt/harness/scripts/lib/assertions.sh
 
 require_env() {

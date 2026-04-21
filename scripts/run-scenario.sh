@@ -42,6 +42,7 @@ fi
 if [[ "${NATIVE}" == "true" ]]; then
     echo "▶ Running scenario natively: ${SCENARIO_FILE}"
     set -a
+    # shellcheck disable=SC1090
     source "${SCENARIO_FILE}"
     set +a
     exec "${SCRIPT_DIR}/in-container-run.sh"

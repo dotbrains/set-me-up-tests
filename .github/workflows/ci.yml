@@ -4,6 +4,8 @@ on:
   push:
     branches: [main, master]
   pull_request:
+  schedule:
+    - cron: '0 6 * * 1'  # Every Monday at 06:00 UTC
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -29,7 +31,7 @@ jobs:
 
   dotfiles-scenario:
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || github.event_name == 'schedule'
     needs: [default-scenario]
     steps:
       - uses: actions/checkout@v4
@@ -39,7 +41,7 @@ jobs:
 
   dotfiles-macos:
     runs-on: macos-latest
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || github.event_name == 'schedule'
     needs: [default-scenario]
     steps:
       - uses: actions/checkout@v4

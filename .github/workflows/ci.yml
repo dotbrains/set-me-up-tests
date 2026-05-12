@@ -14,7 +14,7 @@ concurrency:
 
 jobs:
   default-scenario:
-    runs-on: ubuntu-latest
+    runs-on: blacksmith-4vcpu-ubuntu-2404
     steps:
       - uses: actions/checkout@v4
 
@@ -31,7 +31,7 @@ jobs:
         run: ./scripts/run-scenario.sh default
 
   dotfiles-scenario:
-    runs-on: ubuntu-latest
+    runs-on: blacksmith-4vcpu-ubuntu-2404
     if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
     needs: [default-scenario]
     steps:
@@ -41,7 +41,7 @@ jobs:
         run: ./scripts/run-scenario.sh dotfiles
 
   dotfiles-macos:
-    runs-on: macos-latest
+    runs-on: blacksmith-6vcpu-macos-15
     if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
     needs: [default-scenario]
     steps:

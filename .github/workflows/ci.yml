@@ -49,3 +49,25 @@ jobs:
 
       - name: Run dotfiles scenario (native macOS)
         run: ./scripts/run-scenario.sh --native dotfiles-macos
+
+  flox-smoke-test:
+    name: Flox manifest smoke test
+    runs-on: blacksmith-4vcpu-ubuntu-2404
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Flox
+        uses: flox/install-flox-action@main
+
+      - name: Verify pinned toolchain activates
+        run: |
+          flox activate -- bash -c '
+            set -euo pipefail
+            echo "Toolchain versions inside flox activate:"
+            bash --version | head -1
+            shellcheck --version | head -3
+            echo "Linting harness scripts with the pinned shellcheck:"
+            shellcheck scripts/run-scenario.sh
+            shellcheck scripts/in-container-run.sh
+            shellcheck scripts/lib/assertions.sh
+          '

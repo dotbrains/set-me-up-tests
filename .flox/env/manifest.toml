@@ -1,0 +1,19 @@
+version = 1
+
+# Reproducible toolchain for the set-me-up-tests harness.
+#
+# Activate with `flox activate` from the tests/ directory to get the exact
+# bash and shellcheck versions used in CI. Docker is intentionally not
+# pinned — install it from your OS package manager or Docker Desktop.
+
+[install]
+bash.pkg-path = "bash"
+shellcheck.pkg-path = "shellcheck"
+
+[options]
+systems = [
+  "aarch64-darwin",
+  "x86_64-darwin",
+  "aarch64-linux",
+  "x86_64-linux",
+]

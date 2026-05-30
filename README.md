@@ -31,6 +31,20 @@ Scenario-driven Docker tests for validating [`set-me-up`](https://github.com/dot
 
 - [Docker](https://www.docker.com/)
 
+## Reproducible dev environment (Flox)
+
+A [Flox](https://flox.dev) manifest at `.flox/env/manifest.toml` pins the harness toolchain (`bash`, `shellcheck`) used by CI. Activating it gives you the same versions GitHub Actions runs:
+
+```bash
+# From the tests/ directory:
+flox activate
+
+# Inside the activated shell:
+shellcheck scripts/run-scenario.sh scripts/in-container-run.sh scripts/lib/assertions.sh
+```
+
+Docker is intentionally not pinned in the manifest — install it via your OS package manager or Docker Desktop.
+
 ## Documentation
 
 - [Scenario contract and environment variables](docs/scenarios.md)

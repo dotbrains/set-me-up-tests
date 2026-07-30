@@ -25,16 +25,23 @@ normalize_list() {
     printf "%s\n" "${list[@]}"
 }
 
+installer_url() {
+    local ref="${SMU_INSTALLER_REF:-main}"
+    printf "%s\n" "${SMU_INSTALLER_URL:-https://raw.githubusercontent.com/dotbrains/set-me-up-installer/${ref}/install.sh}"
+}
+
 run_installer() {
     export SMU_HOME_DIR="${SMU_HOME_DIR:-${HOME}/set-me-up}"
     export SMU_BLUEPRINT
     export SMU_BLUEPRINT_BRANCH
+    export SMU_INSTALLER_REF="${SMU_INSTALLER_REF:-main}"
+    export SMU_INSTALLER_URL="${SMU_INSTALLER_URL:-$(installer_url)}"
     export smu_home_dir="${SMU_HOME_DIR}"
     export TERM="${TERM:-xterm}"
 
     echo "▶ Running installer for ${SMU_BLUEPRINT}@${SMU_BLUEPRINT_BRANCH}"
-    bash <(curl -s -L https://raw.githubusercontent.com/dotbrains/set-me-up-installer/main/install.sh) --no-header --skip-confirm --plan
-    bash <(curl -s -L https://raw.githubusercontent.com/dotbrains/set-me-up-installer/main/install.sh) --no-header --skip-confirm
+    bash <(curl -s -L "$(installer_url)") --no-header --skip-confirm --plan
+    bash <(curl -s -L "$(installer_url)") --no-header --skip-confirm
 
     assert_path_exists "${SMU_HOME_DIR}"
     assert_git_repo "${SMU_HOME_DIR}"
@@ -47,7 +54,7 @@ assert_bootstrap_refuses_dirty_blueprint() {
     echo "▶ Checking installer refuses dirty blueprint updates"
     printf "dirty\n" > "$dirty_file"
 
-    if bash <(curl -s -L https://raw.githubusercontent.com/dotbrains/set-me-up-installer/main/install.sh) --no-header --skip-confirm; then
+    if bash <(curl -s -L "$(installer_url)") --no-header --skip-confirm; then
         rm -f "$dirty_file"
         fail "installer updated a dirty blueprint checkout without --force-reset"
     fi
@@ -63,6 +70,32 @@ assert_update_commands() {
     "$smu_cmd" update installer --dry-run
     "$smu_cmd" update modules --dry-run
     "$smu_cmd" update --all --dry-run
+}
+
+assert_blueprint_update_fast_forwards() {
+    local smu_cmd="${SMU_HOME_DIR}/set-me-up-installer/smu"
+    local branch
+    local remote_dir
+    local work_dir
+    local smoke_file="smu-update-smoke.txt"
+
+    branch="$(git -C "${SMU_HOME_DIR}" branch --show-current)"
+    remote_dir="$(mktemp -d)"
+    work_dir="$(mktemp -d)"
+
+    echo "▶ Checking blueprint update fast-forwards from a local remote"
+    git -C "${SMU_HOME_DIR}" clone --bare "${SMU_HOME_DIR}" "${remote_dir}/blueprint.git" >/dev/null
+    git clone "${remote_dir}/blueprint.git" "${work_dir}/blueprint" >/dev/null
+    git -C "${work_dir}/blueprint" config user.name "set-me-up tests"
+    git -C "${work_dir}/blueprint" config user.email "tests@example.invalid"
+    printf "updated\n" > "${work_dir}/blueprint/${smoke_file}"
+    git -C "${work_dir}/blueprint" add "${smoke_file}"
+    git -C "${work_dir}/blueprint" commit -m "test: advance blueprint smoke" >/dev/null
+    git -C "${work_dir}/blueprint" push origin "${branch}" >/dev/null
+    git -C "${SMU_HOME_DIR}" remote set-url origin "${remote_dir}/blueprint.git"
+
+    "$smu_cmd" update blueprint
+    assert_path_exists "${SMU_HOME_DIR}/${smoke_file}"
 }
 
 pin_sha_if_requested() {
@@ -131,6 +164,7 @@ main() {
     run_installer
     assert_bootstrap_refuses_dirty_blueprint
     assert_update_commands
+    assert_blueprint_update_fast_forwards
     pin_sha_if_requested
     run_provision
     assert_expected_symlinks

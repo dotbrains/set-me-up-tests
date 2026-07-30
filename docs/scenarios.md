@@ -2,8 +2,9 @@
 
 Scenario files live in `scenarios/` and define the environment variables for each test run.
 Each scenario bootstraps the blueprint, verifies the installer refuses dirty
-blueprint updates by default, checks the `smu update` dry-run commands, then
-runs the configured provisioning modules.
+blueprint updates by default, checks the `smu update` dry-run commands, verifies
+`smu update blueprint` fast-forwards from a local test remote, then runs the
+configured provisioning modules.
 
 ## Scenario contract
 
@@ -23,6 +24,8 @@ runs the configured provisioning modules.
 | `SMU_RUN_IDEMPOTENCY` | Re-run provision to check idempotency | `true` |
 | `SMU_EXPECTED_SYMLINKS` | Space or comma-separated paths that must be symlinks | _(none)_ |
 | `SMU_HOME_DIR` | Install directory inside the container | `$HOME/set-me-up` |
+| `SMU_INSTALLER_REF` | Installer GitHub ref used by the bootstrap URL | `main` |
+| `SMU_INSTALLER_URL` | Full installer URL, for candidate branches or forks | `https://raw.githubusercontent.com/dotbrains/set-me-up-installer/$SMU_INSTALLER_REF/install.sh` |
 
 ## Built-in scenarios
 
@@ -50,4 +53,11 @@ Run it by name:
 
 ```bash
 ./scripts/run-scenario.sh your-scenario
+```
+
+To validate a candidate installer branch before it is merged to `main`, pass
+the installer ref through to Docker:
+
+```bash
+SMU_PASS_HOST_ENV=true SMU_INSTALLER_REF=my-branch ./scripts/run-scenario.sh default
 ```

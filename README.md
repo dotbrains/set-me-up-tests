@@ -45,6 +45,13 @@ shellcheck scripts/run-scenario.sh scripts/in-container-run.sh scripts/lib/asser
 
 Docker is intentionally not pinned in the manifest — install it via your OS package manager or Docker Desktop.
 
+To test installer changes before they are published to `main`, pass the
+candidate ref into the scenario runner:
+
+```bash
+SMU_PASS_HOST_ENV=true SMU_INSTALLER_REF=my-branch ./scripts/run-scenario.sh default
+```
+
 ## Documentation
 
 - [Scenario contract and environment variables](docs/scenarios.md)

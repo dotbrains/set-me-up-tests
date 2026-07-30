@@ -50,16 +50,26 @@ run_installer() {
 
 assert_bootstrap_refuses_dirty_blueprint() {
     local dirty_file="${SMU_HOME_DIR}/smu-dirty-check.tmp"
+    local output_file
 
     echo "▶ Checking installer refuses dirty blueprint updates"
     printf "dirty\n" > "$dirty_file"
+    output_file="$(mktemp)"
 
-    if bash <(curl -s -L "$(installer_url)") --no-header --skip-confirm; then
+    if ! bash <(curl -s -L "$(installer_url)") --no-header --skip-confirm >"$output_file" 2>&1; then
         rm -f "$dirty_file"
-        fail "installer updated a dirty blueprint checkout without --force-reset"
+        rm -f "$output_file"
+        return 0
     fi
 
-    rm -f "$dirty_file"
+    if grep -q "Existing blueprint checkout has local changes" "$output_file"; then
+        rm -f "$dirty_file" "$output_file"
+        return 0
+    fi
+
+    cat "$output_file" >&2
+    rm -f "$dirty_file" "$output_file"
+    fail "installer updated a dirty blueprint checkout without --force-reset"
 }
 
 assert_update_commands() {

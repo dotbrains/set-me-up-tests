@@ -57,6 +57,19 @@ jobs:
           SMU_INSTALLER_URL: ${{ github.event.inputs.installer_url }}
         run: ./scripts/run-scenario.sh dotfiles
 
+  vps-scenario:
+    runs-on: blacksmith-4vcpu-ubuntu-2404
+    needs: [default-scenario]
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Run headless VPS scenario
+        env:
+          SMU_PASS_HOST_ENV: true
+          SMU_INSTALLER_REF: ${{ github.event.inputs.installer_ref || 'main' }}
+          SMU_INSTALLER_URL: ${{ github.event.inputs.installer_url }}
+        run: ./scripts/run-scenario.sh vps
+
   candidate-scenario:
     runs-on: blacksmith-4vcpu-ubuntu-2404
     if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'

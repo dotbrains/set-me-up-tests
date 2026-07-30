@@ -38,6 +38,13 @@ Uses the official `dotbrains/set-me-up-blueprint` on the `master` branch with th
 
 Uses `nicholasadamou/dotfiles` on `main` with the `base` module. Idempotency is disabled (dotfiles are not designed for repeated runs).
 
+### `vps`
+
+Uses the official `dotbrains/set-me-up-blueprint` on the `master` branch with
+the Debian `server/headless` module. This covers the supported headless
+Ubuntu/Debian VPS path, including a DigitalOcean Droplet, without installing
+workstation packages.
+
 ## Adding a new scenario
 
 Create a `.env` file in `scenarios/`:

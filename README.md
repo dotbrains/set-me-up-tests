@@ -15,6 +15,9 @@ Scenario-driven Docker tests for validating [`set-me-up`](https://github.com/dot
 # Run the dotfiles scenario (Docker/Linux)
 ./scripts/run-scenario.sh dotfiles
 
+# Run the headless VPS scenario (Docker/Linux)
+./scripts/run-scenario.sh vps
+
 # Run the dotfiles scenario on macOS (native)
 ./scripts/run-scenario.sh --native dotfiles-macos
 ```
@@ -25,6 +28,7 @@ Scenario-driven Docker tests for validating [`set-me-up`](https://github.com/dot
 |----------|-----------|---------|----------|
 | `default` | `dotbrains/set-me-up-blueprint` (master) | `example` | Linux (Docker) |
 | `dotfiles` | `nicholasadamou/dotfiles` (main) | `base` | Linux (Docker) |
+| `vps` | `dotbrains/set-me-up-blueprint` (master) | `server/headless` | Linux (Docker) |
 | `dotfiles-macos` | `nicholasadamou/dotfiles` (main) | `base` | macOS (native) |
 
 ## Requirements

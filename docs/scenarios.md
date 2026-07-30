@@ -65,3 +65,5 @@ SMU_PASS_HOST_ENV=true SMU_INSTALLER_REF=my-branch ./scripts/run-scenario.sh def
 
 The GitHub Actions `CI` workflow exposes matching `installer_ref` and
 `installer_url` dispatch inputs.
+Scheduled CI also runs the `default` scenario with `SMU_INSTALLER_REF=candidate`
+so the candidate channel is continuously checked.

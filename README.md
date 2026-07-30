@@ -54,6 +54,8 @@ SMU_PASS_HOST_ENV=true SMU_INSTALLER_REF=my-branch ./scripts/run-scenario.sh def
 
 The `CI` workflow also accepts `installer_ref` and `installer_url` inputs when
 run manually from GitHub Actions.
+On the scheduled run, CI also exercises the stable `candidate` installer branch
+against the default scenario.
 
 ## Documentation
 

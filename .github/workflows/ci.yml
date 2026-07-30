@@ -57,6 +57,19 @@ jobs:
           SMU_INSTALLER_URL: ${{ github.event.inputs.installer_url }}
         run: ./scripts/run-scenario.sh dotfiles
 
+  candidate-scenario:
+    runs-on: blacksmith-4vcpu-ubuntu-2404
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    needs: [default-scenario]
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Run candidate installer scenario
+        env:
+          SMU_PASS_HOST_ENV: true
+          SMU_INSTALLER_REF: candidate
+        run: ./scripts/run-scenario.sh default
+
   dotfiles-macos:
     runs-on: blacksmith-6vcpu-macos-15
     if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'

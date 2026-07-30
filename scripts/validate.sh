@@ -7,3 +7,6 @@ cd "$repo_root"
 
 shellcheck scripts/run-scenario.sh scripts/in-container-run.sh \
     scripts/lib/assertions.sh
+
+test -f scenarios/index.tsv
+grep -q '^vps	' scenarios/index.tsv

@@ -82,6 +82,10 @@ assert_update_commands() {
     "$smu_cmd" update --all --dry-run
 }
 
+run_update_smoke() {
+    [[ "${SMU_RUN_UPDATE_SMOKE:-true}" == "true" ]]
+}
+
 assert_blueprint_update_fast_forwards() {
     local smu_cmd="${SMU_HOME_DIR}/set-me-up-installer/smu"
     local branch
@@ -222,8 +226,12 @@ main() {
     run_installer
     assert_bootstrap_refuses_dirty_blueprint
     assert_update_commands
-    assert_blueprint_update_fast_forwards
-    assert_blueprint_force_reset_discards_local_commit
+    if run_update_smoke; then
+        assert_blueprint_update_fast_forwards
+        assert_blueprint_force_reset_discards_local_commit
+    else
+        echo "ℹ Blueprint update smoke disabled for this scenario."
+    fi
     pin_sha_if_requested
     run_provision
     assert_expected_commands

@@ -31,6 +31,8 @@ Scenario-driven Docker tests for validating [`set-me-up`](https://github.com/dot
 | `vps` | `dotbrains/set-me-up-blueprint` (master) | `server/headless` | Linux (Docker) |
 | `dotfiles-macos` | `nicholasadamou/dotfiles` (main) | `base` | macOS (native) |
 
+Machine-readable scenario metadata lives in `scenarios/index.tsv`.
+
 ## Requirements
 
 - [Docker](https://www.docker.com/)

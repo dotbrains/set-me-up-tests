@@ -22,11 +22,15 @@ configured provisioning modules. It also verifies `smu update blueprint
 |----------|-------------|---------|
 | `SMU_BLUEPRINT_SHA` | Exact commit to pin to after install | _(none)_ |
 | `SMU_MODULES` | Space or comma-separated module names | _(none)_ |
+| `SMU_SETUP_PROFILE` | Named `smu --setup-profile` path to run instead of explicit modules | _(none)_ |
 | `SMU_RUN_IDEMPOTENCY` | Re-run provision to check idempotency | `true` |
+| `SMU_RUN_UPDATE_SMOKE` | Run blueprint update and force-reset smoke checks | `true` |
 | `SMU_EXPECTED_SYMLINKS` | Space or comma-separated paths that must be symlinks | _(none)_ |
+| `SMU_EXPECTED_COMMANDS` | Space or comma-separated commands that must exist after provisioning | _(none)_ |
 | `SMU_HOME_DIR` | Install directory inside the container | `$HOME/set-me-up` |
 | `SMU_INSTALLER_REF` | Installer GitHub ref used by the bootstrap URL | `main` |
 | `SMU_INSTALLER_URL` | Full installer URL, for candidate branches or forks | `https://raw.githubusercontent.com/dotbrains/set-me-up-installer/$SMU_INSTALLER_REF/install.sh` |
+| `SMU_SUBMODULE_SCOPE` | Blueprint submodule scope passed to installer (`all` or `platform`) | `all` |
 
 ## Built-in scenarios
 
@@ -41,9 +45,11 @@ Uses `nicholasadamou/dotfiles` on `main` with the `base` module. Idempotency is 
 ### `vps`
 
 Uses the official `dotbrains/set-me-up-blueprint` on the `master` branch with
-the Debian `server/headless` module. This covers the supported headless
-Ubuntu/Debian VPS path, including a DigitalOcean Droplet, without installing
-workstation packages.
+the `vps` setup profile, which provisions the Debian `server/headless` module.
+This covers the supported headless Ubuntu/Debian VPS path, including a
+DigitalOcean Droplet, without installing workstation packages. It also uses
+`SMU_SUBMODULE_SCOPE=platform` so the bootstrap skips macOS-only module
+submodules.
 
 ## Adding a new scenario
 

@@ -1,0 +1,5 @@
+# scenario	description	modules	platform	required
+default	Official blueprint smoke scenario	example	docker	true
+dotfiles	User dotfiles Linux scenario	base	docker	false
+dotfiles-macos	User dotfiles native macOS scenario	base	macos	false
+vps	Headless Ubuntu/Debian VPS scenario	server/headless	docker	true

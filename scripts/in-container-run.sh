@@ -36,6 +36,7 @@ run_installer() {
     export SMU_BLUEPRINT_BRANCH
     export SMU_INSTALLER_REF="${SMU_INSTALLER_REF:-main}"
     export SMU_INSTALLER_URL="${SMU_INSTALLER_URL:-$(installer_url)}"
+    export SMU_SUBMODULE_SCOPE="${SMU_SUBMODULE_SCOPE:-all}"
     export smu_home_dir="${SMU_HOME_DIR}"
     export TERM="${TERM:-xterm}"
 
@@ -88,6 +89,10 @@ assert_blueprint_update_fast_forwards() {
     local remote_dir
     local work_dir
     local smoke_file="smu-update-smoke.txt"
+
+    git -C "${SMU_HOME_DIR}" reset --hard HEAD >/dev/null
+    git -C "${SMU_HOME_DIR}" clean -fd >/dev/null
+    git -C "${SMU_HOME_DIR}" submodule update --init --recursive >/dev/null
 
     branch="$(git -C "${SMU_HOME_DIR}" branch --show-current)"
     remote_dir="$(mktemp -d)"
@@ -147,8 +152,13 @@ run_provision() {
         [[ -n "$module" ]] && modules+=("$module")
     done < <(normalize_list "${SMU_MODULES:-}")
 
-    local -a cmd=("$smu_cmd" --provision)
-    if (( ${#modules[@]} > 0 )); then
+    local -a cmd=("$smu_cmd")
+    if [[ -n "${SMU_SETUP_PROFILE:-}" ]]; then
+        cmd+=(--setup-profile "${SMU_SETUP_PROFILE}")
+    else
+        cmd+=(--provision)
+    fi
+    if (( ${#modules[@]} > 0 )) && [[ -z "${SMU_SETUP_PROFILE:-}" ]]; then
         cmd+=(--modules "${modules[@]}")
     fi
 
@@ -165,8 +175,27 @@ run_provision() {
     for module in "${modules[@]}"; do
         assert_log_contains "$log_file" "$module"
     done
+    if [[ -n "${SMU_SETUP_PROFILE:-}" ]]; then
+        assert_log_contains "$log_file" "${SMU_SETUP_PROFILE}"
+    fi
 
     rm -f "$log_file"
+}
+
+assert_expected_commands() {
+    local -a commands=()
+    while IFS= read -r command_name; do
+        [[ -n "$command_name" ]] && commands+=("$command_name")
+    done < <(normalize_list "${SMU_EXPECTED_COMMANDS:-}")
+
+    if (( ${#commands[@]} == 0 )); then
+        echo "ℹ No explicit command assertions configured."
+        return 0
+    fi
+
+    for command_name in "${commands[@]}"; do
+        command -v "$command_name" >/dev/null 2>&1 || fail "expected command not found: $command_name"
+    done
 }
 
 assert_expected_symlinks() {
@@ -196,6 +225,7 @@ main() {
     assert_blueprint_force_reset_discards_local_commit
     pin_sha_if_requested
     run_provision
+    assert_expected_commands
     assert_expected_symlinks
 
     echo "✅ Scenario completed successfully."

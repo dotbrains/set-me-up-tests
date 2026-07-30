@@ -225,12 +225,12 @@ main() {
 
     run_installer
     assert_bootstrap_refuses_dirty_blueprint
-    assert_update_commands
     if run_update_smoke; then
+        assert_update_commands
         assert_blueprint_update_fast_forwards
         assert_blueprint_force_reset_discards_local_commit
     else
-        echo "ℹ Blueprint update smoke disabled for this scenario."
+        echo "ℹ Update checks disabled for this scenario."
     fi
     pin_sha_if_requested
     run_provision

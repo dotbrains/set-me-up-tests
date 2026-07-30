@@ -93,6 +93,8 @@ assert_blueprint_update_fast_forwards() {
     git -C "${SMU_HOME_DIR}" reset --hard HEAD >/dev/null
     git -C "${SMU_HOME_DIR}" clean -fd >/dev/null
     git -C "${SMU_HOME_DIR}" submodule update --init --recursive >/dev/null
+    git -C "${SMU_HOME_DIR}" submodule foreach --recursive \
+        'git reset --hard HEAD >/dev/null && git clean -fd >/dev/null' >/dev/null
 
     branch="$(git -C "${SMU_HOME_DIR}" branch --show-current)"
     remote_dir="$(mktemp -d)"

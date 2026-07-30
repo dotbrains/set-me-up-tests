@@ -33,11 +33,36 @@ run_installer() {
     export TERM="${TERM:-xterm}"
 
     echo "▶ Running installer for ${SMU_BLUEPRINT}@${SMU_BLUEPRINT_BRANCH}"
+    bash <(curl -s -L https://raw.githubusercontent.com/dotbrains/set-me-up-installer/main/install.sh) --no-header --skip-confirm --plan
     bash <(curl -s -L https://raw.githubusercontent.com/dotbrains/set-me-up-installer/main/install.sh) --no-header --skip-confirm
 
     assert_path_exists "${SMU_HOME_DIR}"
     assert_git_repo "${SMU_HOME_DIR}"
     assert_path_exists "${SMU_HOME_DIR}/set-me-up-installer/smu"
+}
+
+assert_bootstrap_refuses_dirty_blueprint() {
+    local dirty_file="${SMU_HOME_DIR}/smu-dirty-check.tmp"
+
+    echo "▶ Checking installer refuses dirty blueprint updates"
+    printf "dirty\n" > "$dirty_file"
+
+    if bash <(curl -s -L https://raw.githubusercontent.com/dotbrains/set-me-up-installer/main/install.sh) --no-header --skip-confirm; then
+        rm -f "$dirty_file"
+        fail "installer updated a dirty blueprint checkout without --force-reset"
+    fi
+
+    rm -f "$dirty_file"
+}
+
+assert_update_commands() {
+    local smu_cmd="${SMU_HOME_DIR}/set-me-up-installer/smu"
+
+    echo "▶ Checking update command plans"
+    "$smu_cmd" update blueprint --dry-run
+    "$smu_cmd" update installer --dry-run
+    "$smu_cmd" update modules --dry-run
+    "$smu_cmd" update --all --dry-run
 }
 
 pin_sha_if_requested() {
@@ -104,6 +129,8 @@ main() {
     require_env "SMU_BLUEPRINT_BRANCH"
 
     run_installer
+    assert_bootstrap_refuses_dirty_blueprint
+    assert_update_commands
     pin_sha_if_requested
     run_provision
     assert_expected_symlinks

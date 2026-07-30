@@ -1,6 +1,9 @@
 # Scenarios
 
 Scenario files live in `scenarios/` and define the environment variables for each test run.
+Each scenario bootstraps the blueprint, verifies the installer refuses dirty
+blueprint updates by default, checks the `smu update` dry-run commands, then
+runs the configured provisioning modules.
 
 ## Scenario contract
 

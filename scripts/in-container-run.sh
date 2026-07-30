@@ -36,7 +36,6 @@ run_installer() {
     export SMU_BLUEPRINT_BRANCH
     export SMU_INSTALLER_REF="${SMU_INSTALLER_REF:-main}"
     export SMU_INSTALLER_URL="${SMU_INSTALLER_URL:-$(installer_url)}"
-    export SMU_SUBMODULE_SCOPE="${SMU_SUBMODULE_SCOPE:-all}"
     export smu_home_dir="${SMU_HOME_DIR}"
     export TERM="${TERM:-xterm}"
 

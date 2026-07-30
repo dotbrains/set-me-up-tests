@@ -49,7 +49,8 @@ the `vps` setup profile, which provisions the Debian `server/headless` module.
 This covers the supported headless Ubuntu/Debian VPS path, including a
 DigitalOcean Droplet, without installing workstation packages. It also uses
 `SMU_SUBMODULE_SCOPE=platform` so the bootstrap skips macOS-only module
-submodules.
+submodules, and disables generic update smoke checks to keep the scenario
+focused on headless provisioning.
 
 ## Adding a new scenario
 

@@ -4,7 +4,8 @@ Scenario files live in `scenarios/` and define the environment variables for eac
 Each scenario bootstraps the blueprint, verifies the installer refuses dirty
 blueprint updates by default, checks the `smu update` dry-run commands, verifies
 `smu update blueprint` fast-forwards from a local test remote, then runs the
-configured provisioning modules.
+configured provisioning modules. It also verifies `smu update blueprint
+--force-reset` discards a local-only commit in a controlled checkout.
 
 ## Scenario contract
 
@@ -61,3 +62,6 @@ the installer ref through to Docker:
 ```bash
 SMU_PASS_HOST_ENV=true SMU_INSTALLER_REF=my-branch ./scripts/run-scenario.sh default
 ```
+
+The GitHub Actions `CI` workflow exposes matching `installer_ref` and
+`installer_url` dispatch inputs.

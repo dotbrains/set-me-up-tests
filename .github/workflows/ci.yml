@@ -5,6 +5,15 @@ on:
     branches: [main, master]
   pull_request:
   workflow_dispatch:
+    inputs:
+      installer_ref:
+        description: Installer Git ref to test
+        required: false
+        default: main
+      installer_url:
+        description: Full installer URL to test
+        required: false
+        default: ''
   schedule:
     - cron: '0 6 * * 1'  # Every Monday at 06:00 UTC
 
@@ -28,6 +37,10 @@ jobs:
           shellcheck scripts/lib/assertions.sh
 
       - name: Run default scenario
+        env:
+          SMU_PASS_HOST_ENV: true
+          SMU_INSTALLER_REF: ${{ github.event.inputs.installer_ref || 'main' }}
+          SMU_INSTALLER_URL: ${{ github.event.inputs.installer_url }}
         run: ./scripts/run-scenario.sh default
 
   dotfiles-scenario:
@@ -38,6 +51,10 @@ jobs:
       - uses: actions/checkout@v5
 
       - name: Run dotfiles scenario
+        env:
+          SMU_PASS_HOST_ENV: true
+          SMU_INSTALLER_REF: ${{ github.event.inputs.installer_ref || 'main' }}
+          SMU_INSTALLER_URL: ${{ github.event.inputs.installer_url }}
         run: ./scripts/run-scenario.sh dotfiles
 
   dotfiles-macos:
@@ -48,6 +65,9 @@ jobs:
       - uses: actions/checkout@v5
 
       - name: Run dotfiles scenario (native macOS)
+        env:
+          SMU_INSTALLER_REF: ${{ github.event.inputs.installer_ref || 'main' }}
+          SMU_INSTALLER_URL: ${{ github.event.inputs.installer_url }}
         run: ./scripts/run-scenario.sh --native dotfiles-macos
 
   flox-smoke-test:

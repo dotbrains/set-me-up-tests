@@ -98,6 +98,24 @@ assert_blueprint_update_fast_forwards() {
     assert_path_exists "${SMU_HOME_DIR}/${smoke_file}"
 }
 
+assert_blueprint_force_reset_discards_local_commit() {
+    local smu_cmd="${SMU_HOME_DIR}/set-me-up-installer/smu"
+    local reset_file="${SMU_HOME_DIR}/smu-force-reset-smoke.txt"
+
+    echo "▶ Checking blueprint force-reset discards local commits"
+    git -C "${SMU_HOME_DIR}" config user.name "set-me-up tests"
+    git -C "${SMU_HOME_DIR}" config user.email "tests@example.invalid"
+    printf "local\n" > "$reset_file"
+    git -C "${SMU_HOME_DIR}" add "$reset_file"
+    git -C "${SMU_HOME_DIR}" commit -m "test: local force reset smoke" >/dev/null
+
+    "$smu_cmd" update blueprint --force-reset
+
+    if [[ -e "$reset_file" ]]; then
+        fail "force-reset did not discard local-only blueprint commit"
+    fi
+}
+
 pin_sha_if_requested() {
     if [[ -z "${SMU_BLUEPRINT_SHA:-}" ]]; then
         return 0
@@ -165,6 +183,7 @@ main() {
     assert_bootstrap_refuses_dirty_blueprint
     assert_update_commands
     assert_blueprint_update_fast_forwards
+    assert_blueprint_force_reset_discards_local_commit
     pin_sha_if_requested
     run_provision
     assert_expected_symlinks

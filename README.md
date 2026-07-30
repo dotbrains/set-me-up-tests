@@ -52,6 +52,9 @@ candidate ref into the scenario runner:
 SMU_PASS_HOST_ENV=true SMU_INSTALLER_REF=my-branch ./scripts/run-scenario.sh default
 ```
 
+The `CI` workflow also accepts `installer_ref` and `installer_url` inputs when
+run manually from GitHub Actions.
+
 ## Documentation
 
 - [Scenario contract and environment variables](docs/scenarios.md)

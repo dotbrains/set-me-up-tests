@@ -243,6 +243,19 @@ assert_provisioning_preflight() {
     "${cmd[@]}"
 }
 
+assert_golden_path_commands() {
+    local machine="${SMU_EXPECTED_PLAN_MACHINE:-}"
+    if [[ -z "$machine" ]]; then
+        echo "ℹ No golden-path plan assertion configured."
+        return 0
+    fi
+
+    local smu_cmd="${SMU_HOME_DIR}/set-me-up-installer/smu"
+    echo "▶ Checking golden-path plan and doctor for ${machine}"
+    "$smu_cmd" plan --machine "$machine" --json
+    "$smu_cmd" doctor --json
+}
+
 assert_no_secret_materialization() {
     if [[ "${SMU_EXPECTED_NO_SECRETS:-false}" != "true" ]]; then
         echo "ℹ No secret-materialization assertion configured."
@@ -270,6 +283,7 @@ main() {
     fi
     pin_sha_if_requested
     run_provision
+    assert_golden_path_commands
     assert_provisioning_preflight
     assert_expected_commands
     assert_expected_symlinks

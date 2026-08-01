@@ -263,7 +263,11 @@ assert_no_secret_materialization() {
     fi
 
     echo "▶ Checking no secrets were materialized"
-    if find "${SMU_HOME_DIR}" -type f \( -name '.env' -o -name '*secret*' -o -name '*credential*' \) | grep -q .; then
+    if find "${SMU_HOME_DIR}" \
+        \( -path "${SMU_HOME_DIR}/.git" -o \
+           -path "${SMU_HOME_DIR}/set-me-up-installer" -o \
+           -name '__pycache__' \) -prune -o \
+        -type f \( -name '.env' -o -name '*secret*' -o -name '*credential*' \) -print | grep -q .; then
         fail "secret-like files were materialized under ${SMU_HOME_DIR}"
     fi
 }

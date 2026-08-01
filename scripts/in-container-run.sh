@@ -219,6 +219,42 @@ assert_expected_symlinks() {
     done
 }
 
+assert_provisioning_preflight() {
+    local adapter="${SMU_EXPECTED_PREFLIGHT_ADAPTER:-}"
+    if [[ -z "$adapter" ]]; then
+        echo "ℹ No provisioning preflight assertion configured."
+        return 0
+    fi
+
+    local smu_cmd="${SMU_HOME_DIR}/set-me-up-installer/smu"
+    local -a modules=()
+    while IFS= read -r module; do
+        [[ -n "$module" ]] && modules+=("$module")
+    done < <(normalize_list "${SMU_EXPECTED_PREFLIGHT_MODULES:-}")
+    echo "▶ Checking provisioning preflight for ${adapter}"
+    local -a cmd=("$smu_cmd" provisioning-adapter preflight --adapter "$adapter" --profile "${SMU_EXPECTED_PREFLIGHT_PROFILE:-default}" --json)
+    if (( ${#modules[@]} > 0 )); then
+        cmd+=(--modules "${modules[@]}")
+    fi
+    if [[ "${SMU_EXPECTED_PREFLIGHT_ALLOW_FAILURE:-false}" == "true" ]]; then
+        "${cmd[@]}" || return 0
+        return 0
+    fi
+    "${cmd[@]}"
+}
+
+assert_no_secret_materialization() {
+    if [[ "${SMU_EXPECTED_NO_SECRETS:-false}" != "true" ]]; then
+        echo "ℹ No secret-materialization assertion configured."
+        return 0
+    fi
+
+    echo "▶ Checking no secrets were materialized"
+    if find "${SMU_HOME_DIR}" -type f \( -name '.env' -o -name '*secret*' -o -name '*credential*' \) | grep -q .; then
+        fail "secret-like files were materialized under ${SMU_HOME_DIR}"
+    fi
+}
+
 main() {
     require_env "SMU_BLUEPRINT"
     require_env "SMU_BLUEPRINT_BRANCH"
@@ -234,8 +270,10 @@ main() {
     fi
     pin_sha_if_requested
     run_provision
+    assert_provisioning_preflight
     assert_expected_commands
     assert_expected_symlinks
+    assert_no_secret_materialization
 
     echo "✅ Scenario completed successfully."
 }

@@ -27,6 +27,11 @@ configured provisioning modules. It also verifies `smu update blueprint
 | `SMU_RUN_UPDATE_SMOKE` | Run blueprint update and force-reset smoke checks | `true` |
 | `SMU_EXPECTED_SYMLINKS` | Space or comma-separated paths that must be symlinks | _(none)_ |
 | `SMU_EXPECTED_COMMANDS` | Space or comma-separated commands that must exist after provisioning | _(none)_ |
+| `SMU_EXPECTED_PREFLIGHT_ADAPTER` | Adapter to verify with `smu provisioning-adapter preflight --json` | _(none)_ |
+| `SMU_EXPECTED_PREFLIGHT_PROFILE` | Profile used for the preflight assertion | `default` |
+| `SMU_EXPECTED_PREFLIGHT_MODULES` | Space or comma-separated modules used for the preflight assertion | _(profile modules)_ |
+| `SMU_EXPECTED_PREFLIGHT_ALLOW_FAILURE` | Treat preflight output as a readiness fixture without failing the scenario | `false` |
+| `SMU_EXPECTED_NO_SECRETS` | Assert no secret-like files were materialized under `$SMU_HOME_DIR` | `false` |
 | `SMU_HOME_DIR` | Install directory inside the container | `$HOME/set-me-up` |
 | `SMU_INSTALLER_REF` | Installer GitHub ref used by the bootstrap URL | `main` |
 | `SMU_INSTALLER_URL` | Full installer URL, for candidate branches or forks | `https://raw.githubusercontent.com/dotbrains/set-me-up-installer/$SMU_INSTALLER_REF/install.sh` |
@@ -42,7 +47,7 @@ Uses the official `dotbrains/set-me-up-blueprint` on the `master` branch with th
 
 Uses `nicholasadamou/dotfiles` on `main` with the `base` module. Idempotency is disabled (dotfiles are not designed for repeated runs).
 
-### `vps`
+### `vps`, `vps-ubuntu`, and `vps-debian`
 
 Uses the official `dotbrains/set-me-up-blueprint` on the `master` branch with
 the `vps` setup profile, which provisions the Debian `server/headless` module.
@@ -50,7 +55,9 @@ This covers the supported headless Ubuntu/Debian VPS path, including a
 DigitalOcean Droplet, without installing workstation packages. It also uses
 `SMU_SUBMODULE_SCOPE=platform` so the bootstrap skips macOS-only module
 submodules, and disables generic update smoke checks to keep the scenario
-focused on headless provisioning.
+focused on headless provisioning. The explicit Ubuntu/Debian fixtures also run
+rcm or Home Manager preflight assertions and check that no secret-like files are
+created by bootstrap or provisioning.
 
 ## Adding a new scenario
 

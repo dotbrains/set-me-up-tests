@@ -17,6 +17,8 @@ Scenario-driven Docker tests for validating [`set-me-up`](https://github.com/dot
 
 # Run the headless VPS scenario (Docker/Linux)
 ./scripts/run-scenario.sh vps
+./scripts/run-scenario.sh vps-ubuntu
+./scripts/run-scenario.sh vps-debian
 
 # Run the dotfiles scenario on macOS (native)
 ./scripts/run-scenario.sh --native dotfiles-macos
@@ -30,6 +32,8 @@ Scenario-driven Docker tests for validating [`set-me-up`](https://github.com/dot
 | `dotfiles` | `nicholasadamou/dotfiles` (main) | `base` | Linux (Docker) |
 | `vps` | `dotbrains/set-me-up-blueprint` (master) | `server/headless` | Linux (Docker) |
 | `dotfiles-macos` | `nicholasadamou/dotfiles` (main) | `base` | macOS (native) |
+| `vps-ubuntu` | `dotbrains/set-me-up-blueprint` (master) | `server/headless` | Ubuntu VPS fixture |
+| `vps-debian` | `dotbrains/set-me-up-blueprint` (master) | `server/headless` | Debian VPS fixture |
 
 Machine-readable scenario metadata lives in `scenarios/index.tsv`.
 

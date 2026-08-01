@@ -60,6 +60,10 @@ jobs:
   vps-scenario:
     runs-on: blacksmith-4vcpu-ubuntu-2404
     needs: [default-scenario]
+    strategy:
+      fail-fast: false
+      matrix:
+        scenario: [vps, vps-ubuntu, vps-debian]
     steps:
       - uses: actions/checkout@v5
 
@@ -68,7 +72,7 @@ jobs:
           SMU_PASS_HOST_ENV: true
           SMU_INSTALLER_REF: ${{ github.event.inputs.installer_ref || 'main' }}
           SMU_INSTALLER_URL: ${{ github.event.inputs.installer_url }}
-        run: ./scripts/run-scenario.sh vps
+        run: ./scripts/run-scenario.sh "${{ matrix.scenario }}"
 
   candidate-scenario:
     runs-on: blacksmith-4vcpu-ubuntu-2404

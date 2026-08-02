@@ -90,3 +90,21 @@ The GitHub Actions `CI` workflow exposes matching `installer_ref` and
 `installer_url` dispatch inputs.
 Scheduled CI also runs the `default` scenario with `SMU_INSTALLER_REF=candidate`
 so the candidate channel is continuously checked.
+
+## Productization smoke surfaces
+
+The test harness treats these `smu` commands as part of the supported dry-run
+surface for real machines and downstream blueprints:
+
+```bash
+smu release-package --version 1.2.3 --json
+smu fleet plan --profile vps --json
+smu blueprint-registry --json
+smu module-graph base rcm nix --json
+smu tui --profile vps --json
+smu drift doctor --json
+smu post-install doctor --profile vps --json
+smu policy check --preset ci --json
+smu rollback-test restore --json
+smu product-docs generate --output product-docs.md --json
+```

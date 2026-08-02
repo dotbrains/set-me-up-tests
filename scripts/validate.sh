@@ -16,6 +16,10 @@ grep -q 'debian:stable-slim|apt|rcm' scripts/vps-curl-smoke.sh
 grep -q 'install.sh | bash -s -- --profile vps --plan' docs/ubuntu-vps-first-run-transcript.md
 grep -q 'install.sh | bash -s -- --profile vps' docs/ubuntu-vps-first-run-transcript.md
 grep -q 'smu doctor --strict --json' docs/ubuntu-vps-first-run-transcript.md
+grep -q 'smu release-package --version 1.2.3 --json' docs/scenarios.md
+grep -q 'smu fleet plan --profile vps --json' docs/scenarios.md
+grep -q 'smu policy check --preset ci --json' docs/scenarios.md
+grep -q 'smu rollback-test restore --json' docs/scenarios.md
 
 if [[ "${SMU_RUN_REAL_VPS_SMOKE:-false}" == "true" ]]; then
     scripts/vps-curl-smoke.sh

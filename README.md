@@ -23,6 +23,9 @@ Scenario-driven Docker tests for validating [`set-me-up`](https://github.com/dot
 # Run the real curl-path VPS matrix when Docker is available
 SMU_RUN_REAL_VPS_SMOKE=true ./scripts/validate.sh
 
+# Check documented productization smoke surfaces
+./scripts/validate.sh
+
 # Run the dotfiles scenario on macOS (native)
 ./scripts/run-scenario.sh --native dotfiles-macos
 ```
@@ -71,6 +74,12 @@ Ubuntu, Debian, and Arch containers across `rcm`, `nix`, and `hybrid`
 provisioning adapter plan paths.
 On the scheduled run, CI also exercises the stable `candidate` installer branch
 against the default scenario.
+
+The native validation also asserts that the installer exposes the productized
+operations used by root executable docs: release packaging, fleet bootstrap
+planning, blueprint registry lookup, module graph explanation, TUI planning,
+drift doctor, post-install doctor, policy checks, rollback restore fixtures,
+and product docs generation.
 
 ## Documentation
 

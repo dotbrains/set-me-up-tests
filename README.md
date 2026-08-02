@@ -20,6 +20,9 @@ Scenario-driven Docker tests for validating [`set-me-up`](https://github.com/dot
 ./scripts/run-scenario.sh vps-ubuntu
 ./scripts/run-scenario.sh vps-debian
 
+# Run the real curl-path VPS matrix when Docker is available
+SMU_RUN_REAL_VPS_SMOKE=true ./scripts/validate.sh
+
 # Run the dotfiles scenario on macOS (native)
 ./scripts/run-scenario.sh --native dotfiles-macos
 ```
@@ -63,7 +66,9 @@ SMU_PASS_HOST_ENV=true SMU_INSTALLER_REF=my-branch ./scripts/run-scenario.sh def
 ```
 
 The `CI` workflow also accepts `installer_ref` and `installer_url` inputs when
-run manually from GitHub Actions.
+run manually from GitHub Actions. The opt-in real VPS smoke script covers
+Ubuntu, Debian, and Arch containers across `rcm`, `nix`, and `hybrid`
+provisioning adapter plan paths.
 On the scheduled run, CI also exercises the stable `candidate` installer branch
 against the default scenario.
 

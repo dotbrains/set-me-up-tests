@@ -52,7 +52,9 @@ Uses `nicholasadamou/dotfiles` on `main` with the `base` module. Idempotency is 
 Uses the official `dotbrains/set-me-up-blueprint` on the `master` branch with
 the `vps` setup profile, which provisions the Debian `server/headless` module.
 This covers the supported headless Ubuntu/Debian VPS path, including a
-DigitalOcean Droplet, without installing workstation packages. It also uses
+DigitalOcean Droplet, without installing workstation packages. The opt-in real
+curl smoke additionally checks Ubuntu, Debian, and Arch containers across
+`rcm`, `nix`, and `hybrid` plan paths. It also uses
 `SMU_SUBMODULE_SCOPE=platform` so the bootstrap skips macOS-only module
 submodules, and disables generic update smoke checks to keep the scenario
 focused on headless provisioning. The explicit Ubuntu/Debian fixtures also run

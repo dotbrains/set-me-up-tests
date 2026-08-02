@@ -111,4 +111,14 @@ smu policy check --preset ci --json
 smu policy check --root . --preset ci --json
 smu rollback-test restore --json
 smu product-docs generate --source scripts/docs/EXECUTABLE-WORKFLOWS.md --output product-docs.md --json
+smu inventory --json
+smu facts collect --json
+smu plan diff --from previous-plan.json --to current-plan.json --json
+smu approval --preset strict --dry-run --json
+smu state timeline --json
+smu lock --output smu.lock --json
+smu bootstrap bundle --profile vps --output smu-bootstrap.zip --json
+smu policy explain --preset ci --json
+smu golden-examples --json
+smu provenance --version 1.2.3 --json
 ```

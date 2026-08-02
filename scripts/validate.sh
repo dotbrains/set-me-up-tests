@@ -23,6 +23,11 @@ grep -q 'smu fleet apply --hosts hosts.txt --profile vps --dry-run --json' docs/
 grep -q 'smu policy check --preset ci --json' docs/scenarios.md
 grep -q 'smu policy check --root . --preset ci --json' docs/scenarios.md
 grep -q 'smu rollback-test restore --json' docs/scenarios.md
+grep -q 'smu inventory --json' docs/scenarios.md
+grep -q 'smu facts collect --json' docs/scenarios.md
+grep -q 'smu plan diff --from previous-plan.json --to current-plan.json --json' docs/scenarios.md
+grep -q 'smu bootstrap bundle --profile vps --output smu-bootstrap.zip --json' docs/scenarios.md
+grep -q 'smu provenance --version 1.2.3 --json' docs/scenarios.md
 
 if [[ "${SMU_RUN_REAL_VPS_SMOKE:-false}" == "true" ]]; then
     scripts/vps-curl-smoke.sh
